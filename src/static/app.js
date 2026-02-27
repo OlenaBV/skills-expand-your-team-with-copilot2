@@ -475,10 +475,18 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to share activity on social media
   function shareActivity(platform, activityName, activityDescription, activitySchedule) {
     const url = window.location.href;
-    // Sanitize and truncate description for sharing
-    const sanitizedDescription = activityDescription.substring(0, 200).replace(/[<>]/g, '');
+    
+    // Sanitize description by encoding HTML entities and truncating
+    const sanitizedDescription = activityDescription
+      .substring(0, 200)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
+    
     const text = `Check out ${activityName} at Mergington High School! ${sanitizedDescription}`;
-    const hashtags = "MergingtonHigh,ExtracurricularActivities";
+    const hashtags = encodeURIComponent("MergingtonHigh,ExtracurricularActivities");
     
     let shareUrl;
     

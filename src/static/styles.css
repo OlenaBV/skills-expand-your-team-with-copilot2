@@ -403,6 +403,7 @@ button {
   border-color: #1877f2;
 }
 
+/* Twitter brand color (keeping legacy Twitter blue for user recognition) */
 .share-twitter:hover {
   background-color: #1da1f2;
   border-color: #1da1f2;
