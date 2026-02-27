@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Dark mode toggle
   const darkModeToggle = document.getElementById("dark-mode-toggle");
   const themeIcon = darkModeToggle.querySelector(".theme-icon");
-  const themeText = darkModeToggle.querySelector("span:last-child");
+  const themeText = darkModeToggle.querySelectorAll("span")[1];
 
   // Check for saved theme preference or default to light mode
   const currentTheme = localStorage.getItem("theme") || "light";
