@@ -369,6 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoadingSkeletons();
 
     try {
+      // Check if we have mock data available (for demo purposes)
+      if (typeof mockActivitiesData !== 'undefined') {
+        // Use mock data
+        allActivities = mockActivitiesData;
+        displayFilteredActivities();
+        return;
+      }
+
       // Build query string with filters if they exist
       let queryParams = [];
 
@@ -472,6 +480,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Function to share activity on social media
+  function shareActivity(platform, activityName, activityDescription, activitySchedule) {
+    const url = window.location.href;
+    const text = `Check out ${activityName} at Mergington High School! ${activityDescription}`;
+    const hashtags = "MergingtonHigh,ExtracurricularActivities";
+    
+    let shareUrl;
+    
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${hashtags}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+      case 'email':
+        const subject = `Check out ${activityName} at Mergington High School`;
+        const body = `${text}\n\nSchedule: ${activitySchedule}\n\nLearn more: ${url}`;
+        shareUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        break;
+      default:
+        return;
+    }
+    
+    if (platform === 'email') {
+      window.location.href = shareUrl;
+    } else {
+      window.open(shareUrl, '_blank', 'width=600,height=400');
+    }
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -528,6 +570,25 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-button share-facebook tooltip" data-activity="${name}" title="Share on Facebook">
+          <span class="share-icon">📘</span>
+          <span class="tooltip-text">Share on Facebook</span>
+        </button>
+        <button class="share-button share-twitter tooltip" data-activity="${name}" title="Share on Twitter">
+          <span class="share-icon">🐦</span>
+          <span class="tooltip-text">Share on Twitter</span>
+        </button>
+        <button class="share-button share-linkedin tooltip" data-activity="${name}" title="Share on LinkedIn">
+          <span class="share-icon">💼</span>
+          <span class="tooltip-text">Share on LinkedIn</span>
+        </button>
+        <button class="share-button share-email tooltip" data-activity="${name}" title="Share via Email">
+          <span class="share-icon">📧</span>
+          <span class="tooltip-text">Share via Email</span>
+        </button>
+      </div>
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
@@ -575,6 +636,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteButtons = activityCard.querySelectorAll(".delete-participant");
     deleteButtons.forEach((button) => {
       button.addEventListener("click", handleUnregister);
+    });
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const platform = button.classList.contains('share-facebook') ? 'facebook' :
+                        button.classList.contains('share-twitter') ? 'twitter' :
+                        button.classList.contains('share-linkedin') ? 'linkedin' : 'email';
+        shareActivity(platform, name, details.description, formattedSchedule);
+      });
     });
 
     // Add click handler for register button (only when authenticated)

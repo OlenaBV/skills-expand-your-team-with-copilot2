@@ -358,6 +358,73 @@ button {
   overflow: hidden;
 }
 
+/* Social Share Buttons */
+.share-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 6px 0;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.share-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.share-button {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: relative;
+}
+
+.share-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.share-facebook:hover {
+  background-color: #1877f2;
+  border-color: #1877f2;
+}
+
+.share-twitter:hover {
+  background-color: #1da1f2;
+  border-color: #1da1f2;
+}
+
+.share-linkedin:hover {
+  background-color: #0077b5;
+  border-color: #0077b5;
+}
+
+.share-email:hover {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.share-icon {
+  font-size: 0.85rem;
+  transition: transform 0.2s ease;
+}
+
+.share-button:hover .share-icon {
+  transform: scale(1.1);
+}
+
 .skeleton-line {
   height: 10px;
   margin-bottom: 8px;
