@@ -446,7 +446,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Apply difficulty filter
-      // Empty string means "All (No Difficulty)" - only show activities without difficulty_level
+      // Note: Empty string means "All (No Difficulty)" - this is intentional per requirements.
+      // It shows only activities that don't have a difficulty_level field, not all activities.
+      // This differs from typical "All" filters - it specifically shows activities suitable for all levels.
       if (currentDifficulty === "") {
         // Show only activities that don't have a difficulty_level field
         if (details.difficulty_level) {
