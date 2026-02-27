@@ -391,9 +391,11 @@ button {
   position: relative;
 }
 
-.share-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+@media (prefers-reduced-motion: no-preference) {
+  .share-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .share-facebook:hover {
@@ -421,8 +423,10 @@ button {
   transition: transform 0.2s ease;
 }
 
-.share-button:hover .share-icon {
-  transform: scale(1.1);
+@media (prefers-reduced-motion: no-preference) {
+  .share-button:hover .share-icon {
+    transform: scale(1.1);
+  }
 }
 
 .skeleton-line {

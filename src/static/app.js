@@ -369,14 +369,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoadingSkeletons();
 
     try {
-      // Check if we have mock data available (for demo purposes)
-      if (typeof mockActivitiesData !== 'undefined') {
-        // Use mock data
-        allActivities = mockActivitiesData;
-        displayFilteredActivities();
-        return;
-      }
-
       // Build query string with filters if they exist
       let queryParams = [];
 
@@ -483,7 +475,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to share activity on social media
   function shareActivity(platform, activityName, activityDescription, activitySchedule) {
     const url = window.location.href;
-    const text = `Check out ${activityName} at Mergington High School! ${activityDescription}`;
+    // Sanitize and truncate description for sharing
+    const sanitizedDescription = activityDescription.substring(0, 200).replace(/[<>]/g, '');
+    const text = `Check out ${activityName} at Mergington High School! ${sanitizedDescription}`;
     const hashtags = "MergingtonHigh,ExtracurricularActivities";
     
     let shareUrl;
@@ -572,19 +566,19 @@ document.addEventListener("DOMContentLoaded", () => {
       ${capacityIndicator}
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-button share-facebook tooltip" data-activity="${name}" title="Share on Facebook">
+        <button class="share-button share-facebook tooltip" data-activity="${name}" data-platform="facebook" title="Share on Facebook">
           <span class="share-icon">📘</span>
           <span class="tooltip-text">Share on Facebook</span>
         </button>
-        <button class="share-button share-twitter tooltip" data-activity="${name}" title="Share on Twitter">
+        <button class="share-button share-twitter tooltip" data-activity="${name}" data-platform="twitter" title="Share on Twitter">
           <span class="share-icon">🐦</span>
           <span class="tooltip-text">Share on Twitter</span>
         </button>
-        <button class="share-button share-linkedin tooltip" data-activity="${name}" title="Share on LinkedIn">
+        <button class="share-button share-linkedin tooltip" data-activity="${name}" data-platform="linkedin" title="Share on LinkedIn">
           <span class="share-icon">💼</span>
           <span class="tooltip-text">Share on LinkedIn</span>
         </button>
-        <button class="share-button share-email tooltip" data-activity="${name}" title="Share via Email">
+        <button class="share-button share-email tooltip" data-activity="${name}" data-platform="email" title="Share via Email">
           <span class="share-icon">📧</span>
           <span class="tooltip-text">Share via Email</span>
         </button>
@@ -643,9 +637,7 @@ document.addEventListener("DOMContentLoaded", () => {
     shareButtons.forEach((button) => {
       button.addEventListener("click", (e) => {
         e.preventDefault();
-        const platform = button.classList.contains('share-facebook') ? 'facebook' :
-                        button.classList.contains('share-twitter') ? 'twitter' :
-                        button.classList.contains('share-linkedin') ? 'linkedin' : 'email';
+        const platform = button.dataset.platform;
         shareActivity(platform, name, details.description, formattedSchedule);
       });
     });
