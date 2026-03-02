@@ -641,14 +641,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
     shareButton.addEventListener("click", (e) => {
       e.stopPropagation();
+      // Close all other dropdowns first
+      document.querySelectorAll('.share-dropdown').forEach(dropdown => {
+        if (dropdown !== shareDropdown) {
+          dropdown.classList.add('hidden');
+        }
+      });
       shareDropdown.classList.toggle("hidden");
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!activityCard.contains(e.target)) {
-        shareDropdown.classList.add("hidden");
-      }
     });
 
     // Twitter/X share
@@ -978,11 +977,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function copyActivityLink(activityName) {
     const url = getActivityUrl(activityName);
+    
+    // Check if clipboard API is available
+    if (!navigator.clipboard) {
+      // Fallback for browsers without clipboard API
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showMessage(`Link to ${activityName} copied to clipboard!`, 'success');
+      } catch (err) {
+        console.error('Fallback copy failed:', err);
+        showMessage('Failed to copy link. Please copy manually: ' + url, 'error');
+      } finally {
+        document.body.removeChild(textArea);
+      }
+      return;
+    }
+    
+    // Use modern clipboard API
     navigator.clipboard.writeText(url).then(() => {
       showMessage(`Link to ${activityName} copied to clipboard!`, 'success');
     }).catch((err) => {
       console.error('Failed to copy link:', err);
-      showMessage('Failed to copy link. Please try again.', 'error');
+      // Provide fallback message
+      showMessage('Could not copy automatically. Please copy manually: ' + url, 'error');
     });
   }
 
@@ -991,6 +1014,15 @@ document.addEventListener("DOMContentLoaded", () => {
     setDayFilter,
     setTimeRangeFilter,
   };
+
+  // Close all share dropdowns when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest('.social-sharing')) {
+      document.querySelectorAll('.share-dropdown').forEach(dropdown => {
+        dropdown.classList.add('hidden');
+      });
+    }
+  });
 
   // Initialize app
   checkAuthentication();
