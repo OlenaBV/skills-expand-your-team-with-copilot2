@@ -598,6 +598,25 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="social-sharing">
+        <button class="share-button" data-activity="${name}" title="Share this activity">
+          <span class="share-icon">🔗</span> Share
+        </button>
+        <div class="share-dropdown hidden">
+          <button class="share-option share-twitter" data-activity="${name}" title="Share on X (Twitter)">
+            <span class="platform-icon">𝕏</span> Share on X
+          </button>
+          <button class="share-option share-facebook" data-activity="${name}" title="Share on Facebook">
+            <span class="platform-icon">f</span> Share on Facebook
+          </button>
+          <button class="share-option share-linkedin" data-activity="${name}" title="Share on LinkedIn">
+            <span class="platform-icon">in</span> Share on LinkedIn
+          </button>
+          <button class="share-option share-copy" data-activity="${name}" title="Copy link to clipboard">
+            <span class="platform-icon">📋</span> Copy Link
+          </button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -615,6 +634,54 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for social sharing
+    const shareButton = activityCard.querySelector(".share-button");
+    const shareDropdown = activityCard.querySelector(".share-dropdown");
+    
+    shareButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      shareDropdown.classList.toggle("hidden");
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!activityCard.contains(e.target)) {
+        shareDropdown.classList.add("hidden");
+      }
+    });
+
+    // Twitter/X share
+    const shareTwitter = activityCard.querySelector(".share-twitter");
+    shareTwitter.addEventListener("click", (e) => {
+      e.stopPropagation();
+      shareOnTwitter(name, details);
+      shareDropdown.classList.add("hidden");
+    });
+
+    // Facebook share
+    const shareFacebook = activityCard.querySelector(".share-facebook");
+    shareFacebook.addEventListener("click", (e) => {
+      e.stopPropagation();
+      shareOnFacebook(name);
+      shareDropdown.classList.add("hidden");
+    });
+
+    // LinkedIn share
+    const shareLinkedIn = activityCard.querySelector(".share-linkedin");
+    shareLinkedIn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      shareOnLinkedIn(name, details);
+      shareDropdown.classList.add("hidden");
+    });
+
+    // Copy link
+    const shareCopy = activityCard.querySelector(".share-copy");
+    shareCopy.addEventListener("click", (e) => {
+      e.stopPropagation();
+      copyActivityLink(name);
+      shareDropdown.classList.add("hidden");
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -883,6 +950,41 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error signing up:", error);
     }
   });
+
+  // Social sharing helper functions
+  function getActivityUrl(activityName) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    return `${baseUrl}?activity=${encodeURIComponent(activityName)}`;
+  }
+
+  function shareOnTwitter(activityName, details) {
+    const url = getActivityUrl(activityName);
+    const text = `Check out ${activityName} at Mergington High School! ${details.description}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank', 'width=600,height=400');
+  }
+
+  function shareOnFacebook(activityName) {
+    const url = getActivityUrl(activityName);
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank', 'width=600,height=400');
+  }
+
+  function shareOnLinkedIn(activityName, details) {
+    const url = getActivityUrl(activityName);
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(linkedInUrl, '_blank', 'width=600,height=400');
+  }
+
+  function copyActivityLink(activityName) {
+    const url = getActivityUrl(activityName);
+    navigator.clipboard.writeText(url).then(() => {
+      showMessage(`Link to ${activityName} copied to clipboard!`, 'success');
+    }).catch((err) => {
+      console.error('Failed to copy link:', err);
+      showMessage('Failed to copy link. Please try again.', 'error');
+    });
+  }
 
   // Expose filter functions to window for future UI control
   window.activityFilters = {
